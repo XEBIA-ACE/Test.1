@@ -1,0 +1,33 @@
+name: Deploy to GKE
+description: Apply Kubernetes deployment manifest and wait for rollout
+inputs:
+  image_tag:
+    description: Container image tag to deploy
+    required: true
+  environment:
+    description: Target environment (dev/staging/prod)
+    required: true
+  service_name:
+    description: Service name
+    required: true
+  gke_cluster:
+    description: GKE cluster name
+    required: true
+  gke_zone:
+    description: GKE cluster zone
+    required: true
+runs:
+  using: composite
+  steps:
+  - name: Get GKE credentials
+    shell: bash
+    run: "gcloud container clusters get-credentials \\\n  ${{ inputs.gke_cluster }}\
+      \ \\\n  --zone ${{ inputs.gke_zone }}"
+  - name: Set image in deployment
+    shell: bash
+    run: "kubectl set image deployment/${{ inputs.service_name }} \\\n  ${{ inputs.service_name\
+      \ }}=${{ inputs.image_tag }} \\\n  -n ${{ inputs.environment }}"
+  - name: Wait for rollout completion
+    shell: bash
+    run: "kubectl rollout status deployment/${{ inputs.service_name }} \\\n  -n ${{\
+      \ inputs.environment }} \\\n  --timeout=300s"
