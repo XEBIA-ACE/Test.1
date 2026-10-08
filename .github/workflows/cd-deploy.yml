@@ -20,9 +20,8 @@ jobs:
     with:
       image_sha: ${{ github.event.workflow_run.head_sha || github.sha }}
       health_check_url: ${{ vars.HEALTH_CHECK_URL }}
-      azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
-      azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
-      azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      aca_name: ${{ vars.ACA_NAME }}
-      aca_resource_group: ${{ vars.ACA_RESOURCE_GROUP }}
+      ecr_registry: ${{ vars.ECR_REGISTRY }}
+      aws_region: ${{ vars.AWS_REGION || 'us-east-1' }}
+      cluster_name: ${{ vars.EKS_CLUSTER_NAME }}
+      namespace: ${{ vars.K8S_NAMESPACE || 'default' }}
     secrets: inherit
